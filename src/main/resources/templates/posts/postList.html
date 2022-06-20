@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>제목</th>
+                <th>내용</th>
+                <th>가격</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="post : ${posts}">
+                <td th:text="${post.id}"></td>
+                <td th:text="${post.title}"></td>
+                <td th:text="${post.contents}"></td>
+                <td th:text="${post.price}"></td>
+                <td>
+                    <a th:if="${true}" href="#"
+                       th:href="'javascript:del('+${post.id}+')'"
+                       class="btn btn-danger">DEL</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+<script>
+    function del(id) {
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "/posts/" + id + "/del");
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+</html>
