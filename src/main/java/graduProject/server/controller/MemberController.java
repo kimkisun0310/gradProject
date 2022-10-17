@@ -1,51 +1,71 @@
 package graduProject.server.controller;
 
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import graduProject.server.domain.Address;
 import graduProject.server.domain.Member;
+import graduProject.server.form.MemberFormVO;
 import graduProject.server.service.MemberService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
 
-    @GetMapping("/members/new")
-    public String createForm(Model model){
-        model.addAttribute("memberForm", new MemberForm());
-        return "members/createMemberForm";
-    }
-
-    @PostMapping("/members/new")
-    public String create(@Valid MemberForm form, BindingResult result){
-
-        if(result.hasErrors()){
-            return "members/createMemberForm";
-        }
-
-        Address address = new Address(form.getCity(), form.getStreet(), form.getZipcode());
+    //회원가입
+    @PostMapping("/members")
+    public CreateMemberResponse create(@RequestBody MemberFormVO memberFormVO){
         Member member = new Member();
-        member.setUserName(form.getName());
-        member.setAddress(address);
+        member.setUserName(memberFormVO.getName());
+        member.setEmail(memberFormVO.getEmail());
+        member.setPassword(memberFormVO.getPassword());
 
-        memberService.join(member);
-        return "redirect:/";
+        Long id = memberService.join(member);
+        return new CreateMemberResponse(id);
     }
 
+    // 멤버 리스트 출력
     @GetMapping("/members")
-    public String list(Model model){
+    public Result list(){
         List<Member> members = memberService.findMembers();
-        model.addAttribute("members", members);
-        return "members/memberList";
+        List<MemberDto> collect = new ArrayList<>();
+        for(Member member : members){
+            MemberDto memberDto = new MemberDto(member.getUserName(), member.getScore());
+            collect.add(memberDto);
+        }
+        return new Result(collect);
     }
 
+    @Data
+    static class CreateMemberResponse{
+        private Long id;
+        public CreateMemberResponse(Long id) {
+            this.id = id;
+        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T>{
+        private T data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto{
+        private String name;
+        private float score;
+    }
 }

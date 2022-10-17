@@ -6,16 +6,13 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter @Setter
-public class Post {
+public class Post implements Comparator<Post>{
     @Id @GeneratedValue
     @Column(name = "post_id")
     private Long id;
@@ -94,5 +91,21 @@ public class Post {
         for(Chat chat : this.getChats()){
             chat.setChatStatus(ChatStatus.DONE);
         }
+    }
+
+    //오름차순 정렬
+    @Override
+    public int compare(Post p1, Post p2) {
+        String pp1 = p1.getTime().toString();
+        String pp2 = p2.getTime().toString();
+        LocalDateTime dateTime1 = LocalDateTime.parse(pp1);
+        LocalDateTime dateTime2 = LocalDateTime.parse(pp2);
+        if(dateTime1.isBefore(dateTime2)){
+            return -1;
+        }
+        else if(dateTime1.isAfter(dateTime2)){
+            return 1;
+        }
+        else return 0;
     }
 }

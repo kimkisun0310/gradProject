@@ -16,7 +16,7 @@ public class PostService {
     private final PostRepository postRepository;
 
     @Transactional(readOnly = false)
-    public void post(Post post) { postRepository.save(post); }
+    public Long post(Post post) { return postRepository.save(post); }
 
     public Post findOne(Long id){ return postRepository.findOne(id); }
 
@@ -27,7 +27,6 @@ public class PostService {
     public void delete(Long postId){
         Post post = postRepository.findOne(postId);
         post.delete();
-        System.out.println(12313);
     }
     public Post create(Member author, String title, String contents, int price){
         Post post = postRepository.createPost(author, title, contents, price);
