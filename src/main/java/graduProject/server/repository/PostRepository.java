@@ -50,9 +50,9 @@ public class PostRepository {
         return ret;
     }
 
-    public List<Post> findByAuthor(String userName){
-        List<Post> tmp = em.createQuery("select p from Post p where p.author.username = :userName", Post.class)
-                .setParameter("userName", userName)
+    public List<Post> findByUser(Long userId){
+        List<Post> tmp = em.createQuery("select p from Post p where p.author.id = :userId", Post.class)
+                .setParameter("userId", userId)
                 .getResultList();
         List<Post> ret = new ArrayList<>();
         for(Post post : tmp){
@@ -61,12 +61,12 @@ public class PostRepository {
         }
         return ret;
     }
-
     public Post createPost(Member author, String title, String contents, int price){
         Post post = new Post();
         post.setTitle(title);
         post.setContents(contents);
         post.setPrice(price);
+        post.setTime(LocalDateTime.now());
         post.setStatus(PostStatus.CONTINUE);
         author.addPost(post);
         return post;

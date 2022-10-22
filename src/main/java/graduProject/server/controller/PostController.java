@@ -27,8 +27,8 @@ public class PostController {
     private final PostService postService;
     private final MemberService memberService;
 
-    //등록
-    @PostMapping("/posts/new")
+    //게시물 등록
+    @PostMapping("/posts")
     public CreatePostResponse create(@RequestBody @Valid PostFormVO postFormVO){
         Member member = memberService.findOne(postFormVO.getAuthorId());
         Post post = postService.create(member, postFormVO.getTitle(), postFormVO.getContents(), postFormVO.getPrice());
@@ -36,7 +36,13 @@ public class PostController {
         return new CreatePostResponse(id);
     }
 
-    //시간순정렬
+    //게시물 삭제
+    @DeleteMapping("/posts/{postId}")
+    public void deletePost(@PathVariable("postId") Long postId){
+        postService.delete(postId);
+    }
+
+    //게시물 리스트
     @GetMapping("/posts")
     public List<Post> list(){
         List<Post> posts = postService.findAll();
@@ -55,42 +61,57 @@ public class PostController {
         jo.add("Posts", ja);
         return posts;
     }
-    //삭제
-    @PostMapping("/posts/{postId}/del")
-    public void deletePost(@PathVariable("postId") Long postId){
-        postService.delete(postId);
-    }
 
+    //게시물 확인하기
     @GetMapping("/posts/{postId}")
     public Result clickPost(@PathVariable("postId") Long postId){
         Post post = postService.findOne(postId);
-        PostDto postDto = new PostDto(post.getTitle(), post.getContents(), post.getAuthor().getUserName(), post.getTime(), post.getPrice(), post.getUp(), post.getWishNum());
+        PostDto postDto = new PostDto(post.getTitle(), post.getContents(),
+                post.getAuthor().getUserName(), post.getTime().toString(), post.getAuthor().getPicURL(),
+                post.getView(), post.getPrice());
         return new Result(postDto);
     }
 
 
-    //게시글 제목으로 찾기
-    /**url 주소 때문에 일단 스킵*/
+    //내 게시물
+    @GetMapping("/posts/who/{userId}")
+    public List<Post> postList(@PathVariable("userId") Long userId){
+        List<Post> posts = postService.findByAuthor(userId);
+        Collections.sort(posts, Collections.reverseOrder());
+        JsonArray ja = new JsonArray();
+        for(Post post : posts){
+            JsonObject obj = new JsonObject();
+            obj.addProperty("postId", post.getId());
+            obj.addProperty("title", post.getTitle());
+            obj.addProperty("author", post.getAuthor().getUserName());
+            obj.addProperty("price", post.getPrice());
+            obj.addProperty("time", post.getTime().toString());
+            ja.add(obj);
+        }
+        JsonObject jo = new JsonObject();
+        jo.add("Posts", ja);
+        return posts;
+    }
 
-    //게시글 작성자로 찾기
+
     @Data
     static class CreatePostResponse{
         private Long id;
-
         public CreatePostResponse(Long id) {
             this.id = id;
         }
     }
+
     @Data
     @AllArgsConstructor
     static class PostDto{
         private String title;
         private String contents;
         private String author;
-        private LocalDateTime localDateTime;
+        private String localDateTime;
+        private String authorPic;
+        private int view;
         private int price;
-        private int up;
-        private int wishNum;
     }
 
     @Data
@@ -98,5 +119,4 @@ public class PostController {
     static class Result<T>{
         private T data;
     }
-
 }

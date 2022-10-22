@@ -22,12 +22,15 @@ public class PostService {
 
     public List<Post> findAll(){return postRepository.findAll(); }
     public List<Post> findByTitle(String title){ return postRepository.findByTitle(title); }
-    public List<Post> findByAuthor(String authorName){ return postRepository.findByAuthor(authorName); }
+    public List<Post> findByAuthor(Long authorId){ return postRepository.findByUser(authorId); }
 
+    @Transactional(readOnly = false)
     public void delete(Long postId){
         Post post = postRepository.findOne(postId);
         post.delete();
     }
+
+    @Transactional(readOnly = false)
     public Post create(Member author, String title, String contents, int price){
         Post post = postRepository.createPost(author, title, contents, price);
         return post;

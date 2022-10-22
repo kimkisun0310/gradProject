@@ -19,9 +19,9 @@ public class Post implements Comparator<Post>{
 
     private String title;
     private String contents;
-    private int up;
     private int price;
     private int wishNum;
+    private int view;
     LocalDateTime time;
     @Embedded
     Address address;
@@ -29,11 +29,6 @@ public class Post implements Comparator<Post>{
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "author_id")
     private Member author;
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
 
     @OneToMany(mappedBy = "post")
     private List<Chat> chats = new ArrayList<>();
@@ -49,26 +44,6 @@ public class Post implements Comparator<Post>{
     /**
      * 비즈니스로직
      */
-    public static void recommendPost(Member member, Post post){
-        if(upMap.containsKey(member.getUserName())) {
-            if (upMap.get(member.getUserName()) == false) {
-                post.setUp(post.getUp()+1);
-                upMap.put(member.getUserName(), true);
-            }
-        }
-        else{
-            post.setUp(post.getUp()+1);
-            upMap.put(member.getUserName(), true);
-        }
-    }
-
-    public static void cancelRecommendPost(Member member, Post post){
-        if(upMap.containsKey(member.getUserName()) && upMap.get(member.getUserName()) == true){
-            post.setUp(post.getUp()-1);
-            upMap.remove(member.getUserName());
-        }
-    }
-
     public void addChat(Chat chat){
         this.chats.add(chat);
     }

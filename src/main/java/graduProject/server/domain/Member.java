@@ -16,7 +16,8 @@ public class Member {
     private String userName;
     private String email;
     private String password;
-    private float score;
+    private String picURL;
+    private int score;
 
     @Embedded
     private Address address;
@@ -27,8 +28,6 @@ public class Member {
     @OneToMany(mappedBy = "author")
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
-    private List<Post> wishList = new ArrayList<>();
 
     /*
           post 추가 Method
@@ -39,6 +38,5 @@ public class Member {
         this.Chats.add(chat);
     }
 
-    public void addWishList(Post post){ this.wishList.add(post); }
 
 }

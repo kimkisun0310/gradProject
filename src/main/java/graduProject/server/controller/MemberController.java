@@ -1,6 +1,4 @@
 package graduProject.server.controller;
-
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import graduProject.server.domain.Address;
@@ -42,11 +40,20 @@ public class MemberController {
         List<Member> members = memberService.findMembers();
         List<MemberDto> collect = new ArrayList<>();
         for(Member member : members){
-            MemberDto memberDto = new MemberDto(member.getUserName(), member.getScore());
+            MemberDto memberDto = new MemberDto(member.getUserName(), member.getPicURL(), member.getScore());
             collect.add(memberDto);
         }
         return new Result(collect);
     }
+
+    //개인정보 출력
+    @GetMapping("/members/{userId}")
+    public Result findById(@PathVariable("userId") Long userId){
+        Member member = memberService.findOne(userId);
+        MemberDto memberDto = new MemberDto(member.getUserName(), member.getPicURL(), member.getScore());
+        return new Result(memberDto);
+    }
+
 
     @Data
     static class CreateMemberResponse{
@@ -66,6 +73,7 @@ public class MemberController {
     @AllArgsConstructor
     static class MemberDto{
         private String name;
-        private float score;
+        private String picURL;
+        private int score;
     }
 }
