@@ -68,6 +68,10 @@ public class Post implements Comparator<Post>{
         }
     }
 
+    public void upView(){
+        this.view = this.getView()+1;
+    }
+
     //오름차순 정렬
     @Override
     public int compare(Post p1, Post p2) {

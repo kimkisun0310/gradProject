@@ -30,12 +30,12 @@ public class PostRepository {
     public List<Post> findAll(){
         List<Post> tmp = em.createQuery("select p from Post p", Post.class)
                 .getResultList();
-        List<Post> ret = new ArrayList<>();
-        for(Post post : tmp){
-            if(post.getStatus() == PostStatus.DELETE)continue;
-            ret.add(post);
-        }
-        return ret;
+//        List<Post> ret = new ArrayList<>();
+//        for(Post post : tmp){
+//            if(post.getStatus() == PostStatus.DELETE)continue;
+//            ret.add(post);
+//        }
+        return tmp;
     }
 
     public List<Post> findByTitle(String title){
@@ -61,13 +61,16 @@ public class PostRepository {
         }
         return ret;
     }
+
     public Post createPost(Member author, String title, String contents, int price){
         Post post = new Post();
         post.setTitle(title);
         post.setContents(contents);
         post.setPrice(price);
+        post.setView(0);
         post.setTime(LocalDateTime.now());
         post.setStatus(PostStatus.CONTINUE);
+        post.setAuthor(author);
         author.addPost(post);
         return post;
     }

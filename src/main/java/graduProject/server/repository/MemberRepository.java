@@ -35,10 +35,4 @@ public class MemberRepository {
                 .getResultList();
     }
 
-    public List<Member> findByUser(Long userId){
-        return em.createQuery("select m from Member m where m.id = :userId", Member.class)
-                .setParameter("userId", userId)
-                .getResultList();
-    }
-
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,53 +45,46 @@ public class PostController {
 
     //게시물 리스트
     @GetMapping("/posts")
-    public List<Post> list(){
+    public Result list(){
         List<Post> posts = postService.findAll();
-        Collections.sort(posts, Collections.reverseOrder());
-        JsonArray ja = new JsonArray();
+        List<PostDto> collect = new ArrayList<>();
         for(Post post : posts){
-            JsonObject obj = new JsonObject();
-            obj.addProperty("postId", post.getId());
-            obj.addProperty("title", post.getTitle());
-            obj.addProperty("author", post.getAuthor().getUserName());
-            obj.addProperty("price", post.getPrice());
-            obj.addProperty("time", post.getTime().toString());
-            ja.add(obj);
+            if(post.getStatus()==PostStatus.DELETE)continue;
+            PostDto postDto = new PostDto(post.getTitle(), post.getContents(), post.getTime().toString(),
+                    post.getAuthor().getUserName(), post.getAuthor().getPicURL(),
+                    post.getView(), post.getPrice());
+            collect.add(postDto);
         }
-        JsonObject jo = new JsonObject();
-        jo.add("Posts", ja);
-        return posts;
+        return new Result(collect);
     }
 
     //게시물 확인하기
     @GetMapping("/posts/{postId}")
     public Result clickPost(@PathVariable("postId") Long postId){
         Post post = postService.findOne(postId);
+        if(post.getStatus()==PostStatus.DELETE)return new Result(-1);
         PostDto postDto = new PostDto(post.getTitle(), post.getContents(),
-                post.getAuthor().getUserName(), post.getTime().toString(), post.getAuthor().getPicURL(),
+                post.getTime().toString(),
+                post.getAuthor().getUserName(), post.getAuthor().getPicURL(),
                 post.getView(), post.getPrice());
+        post.upView();
         return new Result(postDto);
     }
 
 
     //내 게시물
     @GetMapping("/posts/who/{userId}")
-    public List<Post> postList(@PathVariable("userId") Long userId){
+    public Result postList(@PathVariable("userId") Long userId){
         List<Post> posts = postService.findByAuthor(userId);
-        Collections.sort(posts, Collections.reverseOrder());
-        JsonArray ja = new JsonArray();
+        List<PostDto> collect = new ArrayList<>();
         for(Post post : posts){
-            JsonObject obj = new JsonObject();
-            obj.addProperty("postId", post.getId());
-            obj.addProperty("title", post.getTitle());
-            obj.addProperty("author", post.getAuthor().getUserName());
-            obj.addProperty("price", post.getPrice());
-            obj.addProperty("time", post.getTime().toString());
-            ja.add(obj);
+            if(post.getStatus()==PostStatus.DELETE)continue;
+            PostDto postDto = new PostDto(post.getTitle(), post.getContents(), post.getTime().toString(),
+                    post.getAuthor().getUserName(), post.getAuthor().getPicURL(),
+                    post.getView(), post.getPrice());
+            collect.add(postDto);
         }
-        JsonObject jo = new JsonObject();
-        jo.add("Posts", ja);
-        return posts;
+        return new Result(collect);
     }
 
 
@@ -107,8 +101,8 @@ public class PostController {
     static class PostDto{
         private String title;
         private String contents;
-        private String author;
         private String localDateTime;
+        private String authorName;
         private String authorPic;
         private int view;
         private int price;
