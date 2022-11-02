@@ -47,13 +47,26 @@ public class MemberController {
     }
 
     //개인정보 출력
-    @GetMapping("/members/{userId}")
-    public Result findById(@PathVariable("userId") Long userId){
-        Member member = memberService.findOne(userId);
+    @GetMapping("/members/{memberId}")
+    public Result findById(@PathVariable("memberId") Long memberId){
+        Member member = memberService.findOne(memberId);
         MemberDto memberDto = new MemberDto(member.getUserName(), member.getPicURL(), member.getScore());
         return new Result(memberDto);
     }
 
+    @GetMapping("/members/who/{memberEmail}")
+    public Result findByEmail(@PathVariable("memberEmail") String memberEmail){
+        Member member = memberService.findByEmail(memberEmail);
+        if(member!=null)return new Result(true);
+        else return new Result(false);
+    }
+
+    @PostMapping("members/login")
+    public Result login(@RequestBody MemberFormVO memberFormVO){
+        String email = memberFormVO.getEmail();
+        String password = memberFormVO.getPassword();
+        return new Result(memberService.validateEmailPassword(email, password));
+    }
 
     @Data
     static class CreateMemberResponse{
