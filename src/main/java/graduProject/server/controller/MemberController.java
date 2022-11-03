@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import graduProject.server.domain.Address;
 import graduProject.server.domain.Member;
 import graduProject.server.form.MemberFormVO;
+import graduProject.server.form.MemberLogInVO;
 import graduProject.server.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +30,6 @@ public class MemberController {
         member.setUserName(memberFormVO.getName());
         member.setEmail(memberFormVO.getEmail());
         member.setPassword(memberFormVO.getPassword());
-
         Long id = memberService.join(member);
         return new CreateMemberResponse(id);
     }
@@ -56,15 +56,15 @@ public class MemberController {
 
     @GetMapping("/members/who/{memberEmail}")
     public Result findByEmail(@PathVariable("memberEmail") String memberEmail){
-        Member member = memberService.findByEmail(memberEmail);
-        if(member!=null)return new Result(true);
-        else return new Result(false);
+        List<Member> members = memberService.findByEmail(memberEmail);
+        if(members.isEmpty())return new Result(-1);
+        else return new Result(members.get(0).getId());
     }
 
     @PostMapping("members/login")
-    public Result login(@RequestBody MemberFormVO memberFormVO){
-        String email = memberFormVO.getEmail();
-        String password = memberFormVO.getPassword();
+    public Result login(@RequestBody MemberLogInVO memberLogInVO){
+        String email = memberLogInVO.getEmail();
+        String password = memberLogInVO.getPassword();
         return new Result(memberService.validateEmailPassword(email, password));
     }
 

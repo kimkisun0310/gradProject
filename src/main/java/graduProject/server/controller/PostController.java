@@ -52,7 +52,7 @@ public class PostController {
             if(post.getStatus()==PostStatus.DELETE)continue;
             PostDto postDto = new PostDto(post.getTitle(), post.getContents(), post.getTime().toString(),
                     post.getAuthor().getUserName(), post.getAuthor().getPicURL(),
-                    post.getView(), post.getPrice());
+                    post.getView(), post.getPrice(), post.getId());
             collect.add(postDto);
         }
         return new Result(collect);
@@ -66,7 +66,7 @@ public class PostController {
         PostDto postDto = new PostDto(post.getTitle(), post.getContents(),
                 post.getTime().toString(),
                 post.getAuthor().getUserName(), post.getAuthor().getPicURL(),
-                post.getView(), post.getPrice());
+                post.getView(), post.getPrice(), post.getId());
         post.upView();
         return new Result(postDto);
     }
@@ -81,7 +81,7 @@ public class PostController {
             if(post.getStatus()==PostStatus.DELETE)continue;
             PostDto postDto = new PostDto(post.getTitle(), post.getContents(), post.getTime().toString(),
                     post.getAuthor().getUserName(), post.getAuthor().getPicURL(),
-                    post.getView(), post.getPrice());
+                    post.getView(), post.getPrice(), post.getId());
             collect.add(postDto);
         }
         return new Result(collect);
@@ -106,6 +106,7 @@ public class PostController {
         private String authorPic;
         private int view;
         private int price;
+        private Long postId;
     }
 
     @Data
