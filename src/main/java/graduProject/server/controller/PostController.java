@@ -32,7 +32,8 @@ public class PostController {
     @PostMapping("/posts")
     public CreatePostResponse create(@RequestBody @Valid PostFormVO postFormVO){
         Member member = memberService.findOne(postFormVO.getAuthorId());
-        Post post = postService.create(member, postFormVO.getTitle(), postFormVO.getContents(), postFormVO.getPrice());
+        Post post = postService.create(member, postFormVO.getTitle(), postFormVO.getContents(), postFormVO.getPrice(),
+                postFormVO.getLatitude(), postFormVO.getLongitude());
         Long id = postService.post(post);
         return new CreatePostResponse(id);
     }
@@ -52,7 +53,7 @@ public class PostController {
             if(post.getStatus()==PostStatus.DELETE)continue;
             PostDto postDto = new PostDto(post.getTitle(), post.getContents(), post.getTime().toString(),
                     post.getAuthor().getUserName(), post.getAuthor().getPicURL(),
-                    post.getView(), post.getPrice(), post.getId());
+                    post.getView(), post.getPrice(), post.getId(), post.getLatitude(), post.getLongitude());
             collect.add(postDto);
         }
         return new Result(collect);
@@ -66,7 +67,7 @@ public class PostController {
         PostDto postDto = new PostDto(post.getTitle(), post.getContents(),
                 post.getTime().toString(),
                 post.getAuthor().getUserName(), post.getAuthor().getPicURL(),
-                post.getView(), post.getPrice(), post.getId());
+                post.getView(), post.getPrice(), post.getId(), post.getLatitude(), post.getLongitude());
         post.upView();
         return new Result(postDto);
     }
@@ -81,7 +82,7 @@ public class PostController {
             if(post.getStatus()==PostStatus.DELETE)continue;
             PostDto postDto = new PostDto(post.getTitle(), post.getContents(), post.getTime().toString(),
                     post.getAuthor().getUserName(), post.getAuthor().getPicURL(),
-                    post.getView(), post.getPrice(), post.getId());
+                    post.getView(), post.getPrice(), post.getId(), post.getLatitude(), post.getLongitude());
             collect.add(postDto);
         }
         return new Result(collect);
@@ -107,6 +108,8 @@ public class PostController {
         private int view;
         private int price;
         private Long postId;
+        private double latitude;
+        private double longitude;
     }
 
     @Data

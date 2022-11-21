@@ -62,7 +62,7 @@ public class PostRepository {
         return ret;
     }
 
-    public Post createPost(Member author, String title, String contents, int price){
+    public Post createPost(Member author, String title, String contents, int price, double latitude, double longitude){
         Post post = new Post();
         post.setTitle(title);
         post.setContents(contents);
@@ -71,6 +71,8 @@ public class PostRepository {
         post.setTime(LocalDateTime.now());
         post.setStatus(PostStatus.CONTINUE);
         post.setAuthor(author);
+        post.setLatitude(latitude);
+        post.setLongitude(longitude);
         author.addPost(post);
         return post;
     }

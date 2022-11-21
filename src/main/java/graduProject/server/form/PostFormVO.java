@@ -12,4 +12,6 @@ public class PostFormVO {
     private String contents;
     private int price;
     private Long authorId;
+    private double latitude;
+    private double longitude;
 }

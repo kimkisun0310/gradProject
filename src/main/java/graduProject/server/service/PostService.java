@@ -31,8 +31,8 @@ public class PostService {
     }
 
     @Transactional(readOnly = false)
-    public Post create(Member author, String title, String contents, int price){
-        Post post = postRepository.createPost(author, title, contents, price);
+    public Post create(Member author, String title, String contents, int price, double latitude, double longitude){
+        Post post = postRepository.createPost(author, title, contents, price, latitude, longitude);
         return post;
     }
 }

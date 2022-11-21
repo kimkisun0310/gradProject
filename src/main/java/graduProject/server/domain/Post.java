@@ -22,6 +22,8 @@ public class Post implements Comparator<Post>{
     private int price;
     private int wishNum;
     private int view;
+    private double latitude;
+    private double longitude;
     LocalDateTime time;
     @Embedded
     Address address;
